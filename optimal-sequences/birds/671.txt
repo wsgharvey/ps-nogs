@@ -1,0 +1,6 @@
+40, 48
+72, 64
+32, 16
+32, 48
+80, 40
+data/birds/train/images/7874.png
