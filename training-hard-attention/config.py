@@ -11,7 +11,7 @@ def add_argument_group(name):
 # special args not included in model name
 special_arg = parser.add_argument_group('Special Params')
 special_arg.add_argument('--mode', type=str, default='train',
-                         choices=['train', 'test'],
+                         choices=['train', 'test', 'summarise'],
                          help='Whether to train or test the model')
 special_args = [a.dest for a in special_arg._actions]
 

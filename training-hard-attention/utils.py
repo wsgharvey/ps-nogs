@@ -290,3 +290,9 @@ def get_performance(prediction_log_probs, y, metric):
         return (y == actual_predictions).float()
     else:
         raise Exception('Unrecognised early stopping type.')
+
+
+def iters_to_minimum(run, iters_per_value, threshold=0.):
+    # first trace to get within `threshold` of minimum
+    near_best = (run - run.min()) <= threshold
+    return near_best.argmax() * iters_per_value  # first nonzero

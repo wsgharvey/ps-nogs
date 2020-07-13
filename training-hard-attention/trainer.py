@@ -2,19 +2,17 @@ import torch
 import torch.nn.functional as F
 
 import torch.optim as optim
-import numpy as np
 
 import os
 from os.path import join, splitext
 import time
 import shutil
-import pickle
 import itertools as it
 
 from tqdm import tqdm
 from nn import HardAttentionNetwork
-from utils import denormalize, bounding_box, ScoreMeter, \
-    AverageMeter, to_pil, BestTracker, get_performance
+from utils import ScoreMeter, AverageMeter, to_pil, \
+    BatchScoreMeter, BestTracker, iters_to_minimum
 from hq_loader import anneal_hq_loader
 from location import Location
 
@@ -62,7 +60,6 @@ class Trainer(object):
             self.num_valid = len(self.valid_loader.sampler)
         else:
             self.test_loader = data_loader
-            self.num_test = len(self.test_loader.sampler)
         self.num_classes = config.num_classes
         self.num_channels = 1 if (config.grayscale or config.dataset == 'mnist') else 3
 
@@ -119,6 +116,10 @@ class Trainer(object):
         self.optimizer = optim.Adam(
             self.model.parameters(), lr=config.init_lr,
         )
+
+    @property
+    def num_test(self):
+        return len(self.test_loader.sampler)
 
     def train(self):
         print("\n[*] Train on {} samples, validate on {}".format(
@@ -468,3 +469,18 @@ class Trainer(object):
             print("y:", y.item())
             print("attention target:", target.numpy() if has_target else "none")
             to_pil(x).save(f"{name}_0.png")
+
+    def summarise(self):
+        # print out test accuracy and training iterations
+        test_acc_file = os.path.join(self.experiment_dir, "test_best_acc_T_5.txt")
+        entry = open(test_acc_file, 'r').readline().strip()
+        test_acc = float(entry.split(',')[1][1:-1])
+        valid_file = os.path.join(self.experiment_dir, "valid.csv")
+
+        score_meter = BatchScoreMeter()
+        nlls = score_meter.load_from_csv(open(valid_file, 'r').read())[:, 1]
+        iterations = iters_to_minimum(
+            nlls, iters_per_value=self.valid_every, threshold=0.01
+        )
+
+        print(f"\n Test accuracy: {test_acc} \n Iterations until convergence: {iterations}")

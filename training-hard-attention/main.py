@@ -29,7 +29,7 @@ def main(config, get_metadata=None):
                 None, config.grayscale,
                 config.celebhq_image_type)
             data_loader = (trainer, validator)
-        else:
+        elif config.mode == 'test':
             _, _, data_loader = get_train_celebhq_loader(
                 config.celebhq_image_dir, config.hq_attr_path,
                 config.hq_sequences_dir, config.attr,
@@ -39,6 +39,8 @@ def main(config, get_metadata=None):
                 config.num_workers, config.valid_size, config.test_size,
                 None, config.grayscale,
                 config.celebhq_image_type)
+        else:
+            data_loader = (None, None)
 
     # instantiate trainer
     trainer = Trainer(config, data_loader)
@@ -59,8 +61,10 @@ def main(config, get_metadata=None):
             trainer.plot('sequences')
     elif config.mode == 'train':
         trainer.train()
-    else:
+    elif config.mode == 'test':
         trainer.test()
+    elif config.mode == 'summarise':
+        trainer.summarise()
 
 if __name__ == '__main__':
     config = get_config()
