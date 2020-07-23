@@ -80,7 +80,7 @@ def GET_BIRDS_IMAGE_SAMPLE_LOG_PATH(index):
 # attention parameters------------------------
 IMG_DIM = 224
 ATT_DIM = 16
-MAX_GLIMPSES = 1  # TODO change back to 5
+MAX_GLIMPSES = 5
 LOC_GRID_SIZE = 50
 POSSIBLE_LOCATIONS = [(int(x), int(y))
                       for x in np.linspace(0, IMG_DIM-ATT_DIM-1, LOC_GRID_SIZE)
