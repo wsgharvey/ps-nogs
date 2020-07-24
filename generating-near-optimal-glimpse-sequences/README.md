@@ -13,7 +13,7 @@ heuristic supervision sequences, has not yet been released.
    generated in full with e.g. ``python generate_dataset.py --N0 0 --N
    1500000``, or in part by specifying different `N0` (the index of the initial
    image to generate) and `N` (the number of images to generate). The fake CUB
-   dataset can be generated similarly using `generate_dataset.py`.
+   dataset can be generated similarly using `generate_birds_dataset.py`.
 
 2. An AVP-CNN can be trained for CelebA-HQ with `python train_variational_cnn.py
    test` or CUB with `python train_bird_variational_cnn.py test`.
